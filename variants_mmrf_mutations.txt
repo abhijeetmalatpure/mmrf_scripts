@@ -1,0 +1,57 @@
+# ann_effect1
+
+ 1 downstream_gene_variant                        77670			
+ 2 missense_variant                               62147
+ 3 upstream_gene_variant                          62002
+ 4 intron_variant                                 49912
+ 5 3_prime_UTR_variant                            36619
+ 6 synonymous_variant                             24586
+ 7 intragenic_variant                             18635
+ 8 5_prime_UTR_variant                             8247
+ 9 non_coding_exon_variant                         7960
+10 splice_region_variant                           5390
+11 stop_gained                                     3901
+12 frameshift_variant                              1734
+13 5_prime_UTR_premature_start_codon_gain_variant  1455
+14 splice_donor_variant                             683
+15 splice_acceptor_variant                          651
+16 disruptive_inframe_deletion                      207
+17 start_lost                                       136
+18 inframe_deletion                                 114
+19 stop_lost                                         86
+20 stop_retained_variant                             70
+21 disruptive_inframe_insertion                      33
+22 inframe_insertion                                 33
+23 initiator_codon_variant                           21
+24 non_coding_transcript_variant                      6
+25 5_prime_UTR_truncation                             3
+
+
+# ann_effect2
+ 	2 intron_variant                 5706
+	3 splice_region_variant          1633
+	4 synonymous_variant              684
+ 	5 non_coding_exon_variant         164
+ 	6 stop_gained                      28
+ 	7 splice_donor_variant             21
+ 	8 inframe_deletion                 12
+ 	9 disruptive_inframe_deletion      10
+	10 splice_acceptor_variant           5
+	11 disruptive_inframe_insertion      3
+12 exon_loss_variant                 3
+	13 stop_lost                         2
+	14 start_lost                        1
+
+
+
+# ann_effect3
+	2 splice_region_variant     40
+	3 intron_variant            20
+	4 3_prime_UTR_variant        1
+
+
+
+# ann_effect4
+	2 intron_variant              40
+	3 non_coding_exon_variant      2
+

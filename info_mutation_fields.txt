@@ -1,0 +1,200 @@
+> head(df)
+          Sample X.CHROM       POS ID REF   ALT X1000G COSMIC DB NHLBI CALLERS_COUNT SEURAT MUTECT STRELKA RNA_REF_COUNT
+1 MMRF_1016_1_BM       1   3348577  .   C     T      .      .  .     .             2      .   true    true             .
+2 MMRF_1016_1_BM       1  36388198  .   G GGCCT      .      .  .     .             2   true      .    true             .
+3 MMRF_1016_1_BM       1  74801685  .   A     C      .      .  .     .             2      .   true    true             .
+4 MMRF_1016_1_BM       1  74801685  .   A     C      .      .  .     .             2      .   true    true             .
+5 MMRF_1016_1_BM       1  94466482  .   A     G      .      .  .     .             3   true   true    true             .
+6 MMRF_1016_1_BM       1 110260494  .   C     T      .      .  .     .             3   true   true    true             .
+  RNA_ALT_COUNT RNA_ALT_FREQ GEN.0..AD.0. GEN.0..AD.1. GEN.0..AR GEN.0..DP GEN.1..AD.0. GEN.1..AD.1. GEN.1..AR GEN.1..DP
+1             .            .           46            0         0        46           29            5     0.147        34
+2             .            .           22            0         0        45            9            9     0.500        33
+3             .            .           72            0         0        73           19           13     0.406        32
+4             .            .           72            0         0        73           19           13     0.406        32
+5             .            .           86            0         0        86           23           26     0.531        49
+6             .            .          287            0         0       287          161           48     0.230       209
+  dbNSFP_GERP___RS dbNSFP_LRT_score dbNSFP_MutationAssessor_score                dbNSFP_FATHMM_score dbNSFP_GERP___NR
+1             3.23         0.000136                          2.08 3.41,3.42,3.26,3.26,3.42,3.38,3.38             5.11
+2                .                .                             .                                  .                .
+3                .                .                             .                                  .                .
+4                .                .                             .                                  .                .
+5             5.84         0.540752                         2.905                  -5.72,-5.72,-5.72             5.84
+6                .                .                             .                                  .                .
+  dbNSFP_CADD_raw dbNSFP_MutationTaster_score dbNSFP_CADD_raw_rankscore dbNSFP_CADD_phred dbNSFP_MetaSVM_score
+1         5.34666                           1                   0.91457              28.6              -1.1081
+2               .                           .                         .                 .                    .
+3               .                           .                         .                 .                    .
+4               .                           .                         .                 .                    .
+5         5.16588                           1                   0.89186              27.6               1.1299
+6               .                           .                         .                 .                    .
+  dbNSFP_MetaSVM_rankscore dbNSFP_MetaSVM_pred dbNSFP_MetaLR_score dbNSFP_MetaLR_rankscore dbNSFP_MetaLR_pred
+1                  0.03025                   T              0.0325                 0.13415                  T
+2                        .                   .                   .                       .                  .
+3                        .                   .                   .                       .                  .
+4                        .                   .                   .                       .                  .
+5                  0.99928                   D              0.9694                 0.99111                  D
+6                        .                   .                   .                       .                  .
+  dbNSFP_Reliability_index                               dbNSFP_Interpro_domain dbNSFP_Polyphen2_HDIV_score
+1                       10                                                    .     0.021,0.986,0.884,0.977
+2                        .                                                    .                           .
+3                        .                                                    .                           .
+4                        .                                                    .                           .
+5                       10 ATPase__AAA+_type__core__1_,ABC_transporter-like__1_                       0.949
+6                        .                                                    .                           .
+                               dbNSFP_SIFT_score dbNSFP_Polyphen2_HVAR_score dbNSFP_Polyphen2_HVAR_pred ANN....ALLELE
+1 0.035,0.035,0.057,0.057,0.035,0.042,0.04,0.058     0.004,0.542,0.231,0.341                    B,P,B,B             T
+2                                              .                           .                          .         GGCCT
+3                                              .                           .                          .             C
+4                                              .                           .                          .             C
+5                                0.001,0,0.001,0                       0.632                          P             G
+6                                              .                           .                          .             T
+                           ANN....EFFECT ANN....IMPACT ANN....GENE   ANN....GENEID ANN....FEATURE ANN....FEATUREID ANN....BIOTYPE
+1                       missense_variant      MODERATE      PRDM16 ENSG00000142611     transcript  ENST00000270722 protein_coding
+2                    3_prime_UTR_variant      MODIFIER        AGO1 ENSG00000092847     transcript  ENST00000373204 protein_coding
+3                         intron_variant      MODIFIER FPGT-TNNI3K ENSG00000259030     transcript  ENST00000557284 protein_coding
+4                         intron_variant      MODIFIER      TNNI3K ENSG00000116783     transcript  ENST00000370891 protein_coding
+5 missense_variant&splice_region_variant      MODERATE       ABCA4 ENSG00000198691     transcript  ENST00000370225 protein_coding
+6                    3_prime_UTR_variant      MODIFIER       GSTM5 ENSG00000134201     transcript  ENST00000369812 protein_coding
+  ANN....RANK        ANN....HGVS_C ANN....HGVS_P ANN....CDNA_POS ANN....CDNA_LEN ANN....CDS_POS ANN....CDS_LEN ANN....AA_POS
+1          16            c.3569C>T  p.Pro1190Leu            3618            8690           3569           3831          1190
+2          19 c.*3020_*3023dupCCTG             .              -1              -1             -1             -1            -1
+3           8          c.886-10A>C             .              -1              -1             -1             -1            -1
+4           8          c.847-10A>C             .              -1              -1             -1             -1            -1
+5          47            c.6389T>C  p.Met2130Thr            6476            7309           6389           6822          2130
+6           8            c.*446C>T             .              -1              -1             -1             -1            -1
+  ANN....AA_LEN ANN....DISTANCE        ANN....ERRORS LOF....GENE LOF....GENEID LOF....NUMTR LOF....PERC
+1          1276               0                    .           .             .            .           .
+2            -1            3024 INFO_REALIGN_3_PRIME           .             .            .           .
+3            -1               0                    .           .             .            .           .
+4            -1               0                    .           .             .            .           .
+5          2273               0                    .           .             .            .           .
+6            -1             446                    .           .             .            .           .
+> colnames(df)
+ [1] "Sample"                        "X.CHROM"                       "POS"                          
+ [4] "ID"                            "REF"                           "ALT"                          
+ [7] "X1000G"                        "COSMIC"                        "DB"                           
+[10] "NHLBI"                         "CALLERS_COUNT"                 "SEURAT"                       
+[13] "MUTECT"                        "STRELKA"                       "RNA_REF_COUNT"                
+[16] "RNA_ALT_COUNT"                 "RNA_ALT_FREQ"                  "GEN.0..AD.0."                 
+[19] "GEN.0..AD.1."                  "GEN.0..AR"                     "GEN.0..DP"                    
+[22] "GEN.1..AD.0."                  "GEN.1..AD.1."                  "GEN.1..AR"                    
+[25] "GEN.1..DP"                     "dbNSFP_GERP___RS"              "dbNSFP_LRT_score"             
+[28] "dbNSFP_MutationAssessor_score" "dbNSFP_FATHMM_score"           "dbNSFP_GERP___NR"             
+[31] "dbNSFP_CADD_raw"               "dbNSFP_MutationTaster_score"   "dbNSFP_CADD_raw_rankscore"    
+[34] "dbNSFP_CADD_phred"             "dbNSFP_MetaSVM_score"          "dbNSFP_MetaSVM_rankscore"     
+[37] "dbNSFP_MetaSVM_pred"           "dbNSFP_MetaLR_score"           "dbNSFP_MetaLR_rankscore"      
+[40] "dbNSFP_MetaLR_pred"            "dbNSFP_Reliability_index"      "dbNSFP_Interpro_domain"       
+[43] "dbNSFP_Polyphen2_HDIV_score"   "dbNSFP_SIFT_score"             "dbNSFP_Polyphen2_HVAR_score"  
+[46] "dbNSFP_Polyphen2_HVAR_pred"    "ANN....ALLELE"                 "ANN....EFFECT"                
+[49] "ANN....IMPACT"                 "ANN....GENE"                   "ANN....GENEID"                
+[52] "ANN....FEATURE"                "ANN....FEATUREID"              "ANN....BIOTYPE"               
+[55] "ANN....RANK"                   "ANN....HGVS_C"                 "ANN....HGVS_P"                
+[58] "ANN....CDNA_POS"               "ANN....CDNA_LEN"               "ANN....CDS_POS"               
+[61] "ANN....CDS_LEN"                "ANN....AA_POS"                 "ANN....AA_LEN"                
+[64] "ANN....DISTANCE"               "ANN....ERRORS"                 "LOF....GENE"                  
+[67] "LOF....GENEID"                 "LOF....NUMTR"                  "LOF....PERC"                  
+> summary(df)
+            Sample          X.CHROM            POS                      ID              REF              ALT          X1000G      
+ MMRF_1796_1_BM: 10509   14     : 67571   Min.   :    11196   .          :336080   G      :118252   A      :108087   .   :358736  
+ MMRF_1290_1_BM:  4911   2      : 43580   1st Qu.: 36642154   rs182723052:   392   C      :112819   T      :106100   true:  3565  
+ MMRF_1625_1_BM:  4751   1      : 24204   Median : 89160072   rs2157615  :   380   T      : 66489   C      : 72964                
+ MMRF_1602_1_BM:  4369   11     : 17497   Mean   : 80990533   rs150237274:   360   A      : 58183   G      : 70354                
+ MMRF_1801_1_BM:  2940   5      : 17328   3rd Qu.:106725703   rs78872461 :   276   CT     :   325   AT     :   398                
+ MMRF_2166_1_BM:  2930   19     : 16953   Max.   :249213613   rs111362472:   232   TG     :   313   GA     :   383                
+ (Other)       :331891   (Other):175168                       (Other)    : 24581   (Other):  5920   (Other):  4015                
+  COSMIC          DB          NHLBI        CALLERS_COUNT    SEURAT        MUTECT       STRELKA       RNA_REF_COUNT   
+ .   :354665   .   :336080   .   :328836   Min.   :2.000   .   : 26371   .   : 49289   .   :  6599   0      :107318  
+ true:  7636   true: 26221   true: 33465   1st Qu.:3.000   true:335930   true:313012   true:355702   .      : 82387  
+                                           Median :3.000                                             2      :  9513  
+                                           Mean   :2.773                                             3      :  6903  
+                                           3rd Qu.:3.000                                             4      :  5611  
+                                           Max.   :3.000                                             5      :  4516  
+                                                                                                     (Other):146053  
+ RNA_ALT_COUNT      RNA_ALT_FREQ     GEN.0..AD.0.     GEN.0..AD.1.       GEN.0..AR          GEN.0..DP       GEN.1..AD.0.   
+ 0      :123492   0.0     :123492   Min.   :   2.0   Min.   :-1.0000   Min.   :0.000000   Min.   :   6.0   Min.   :  0.00  
+ .      : 82387   .       : 82387   1st Qu.:  64.0   1st Qu.: 0.0000   1st Qu.:0.000000   1st Qu.:  65.0   1st Qu.: 26.00  
+ 1      :  8508   1.0     :  3476   Median : 104.0   Median : 0.0000   Median :0.000000   Median : 104.0   Median : 55.00  
+ 2      :  6116   0.333333:  3238   Mean   : 130.4   Mean   : 0.1976   Mean   :0.001372   Mean   : 130.9   Mean   : 75.02  
+ 3      :  5109   0.5     :  3206   3rd Qu.: 168.0   3rd Qu.: 0.0000   3rd Qu.:0.000000   3rd Qu.: 168.0   3rd Qu.:100.00  
+ 4      :  4253   0.25    :  1954   Max.   :1201.0   Max.   :40.0000   Max.   :0.243000   Max.   :1253.0   Max.   :927.00  
+ (Other):132436   (Other) :144548                                                                                          
+  GEN.1..AD.1.      GEN.1..AR       GEN.1..DP      dbNSFP_GERP___RS dbNSFP_LRT_score  dbNSFP_MutationAssessor_score
+ Min.   : -1.00   Min.   :0.000   Min.   :   2.0   .      :275467   .       :293931   .      :289796               
+ 1st Qu.: 14.00   1st Qu.:0.216   1st Qu.:  49.0   5.08   :   511   0.000000: 13035   0      :  3960               
+ Median : 27.00   Median :0.375   Median :  88.0   5.77   :   470   0       :  3782   0.345  :  1660               
+ Mean   : 37.97   Mean   :0.391   Mean   : 113.7   6.17   :   445   0.000001:  1924   0.895  :  1635               
+ 3rd Qu.: 49.00   3rd Qu.:0.500   3rd Qu.: 148.0   5.65   :   349   0.000002:   879   0.55   :  1633               
+ Max.   :607.00   Max.   :1.000   Max.   :1187.0   5.68   :   343   0.000003:   606   0.695  :  1265               
+                                                   (Other): 84716   (Other) : 48144   (Other): 62352               
+  dbNSFP_FATHMM_score dbNSFP_GERP___NR dbNSFP_CADD_raw   dbNSFP_MutationTaster_score dbNSFP_CADD_raw_rankscore dbNSFP_CADD_phred
+ .          :290019   .      :275467   .       :275161   .          :276045          .      :275161            .      :275161   
+ .,.        :   619   6.17   :   826   2.525896:   118   1.000      : 50669          0.62002:   170            22.3   :  2076   
+ -1.75      :   181   5.08   :   720   2.435859:   110   1          : 14851          0.59457:   143            22.4   :  2001   
+ -1.81,-1.81:   159   5.77   :   653   2.493968:    94   1.000,1.000:  2554          0.61146:   141            22.2   :  1681   
+ -1.73      :   153   5.65   :   647   2.952024:    44   0.999      :  2007          0.51526:    58            22.5   :  1614   
+ 0.86       :   126   5.68   :   550   0.273276:    40   0.998      :   964          0.43642:    54            22.1   :  1546   
+ (Other)    : 71044   (Other): 83438   (Other) : 86734   (Other)    : 15211          (Other): 86574            (Other): 78222   
+ dbNSFP_MetaSVM_score dbNSFP_MetaSVM_rankscore dbNSFP_MetaSVM_pred dbNSFP_MetaLR_score dbNSFP_MetaLR_rankscore dbNSFP_MetaLR_pred
+ .      :282117       .      :282117           .      :282117      .      :282117      .      :282117          .      :282117    
+ 0.2919 :   159       0.88255:   159           T      : 62080      0.5945 :   163      0.00012:   207          T      : 61183    
+ 0.2643 :   152       0.87829:   152           D      : 13963      0.0000 :   161      0.86489:   163          D      : 14860    
+ 0.7024 :   124       0.93711:   124           T,T    :  2729      0.6134 :   151      0.87265:   151          T,T    :  2720    
+ -1.0389:    73       0.16837:    73           D,D    :   491      0.7419 :   128      0.91845:   128          D,D    :   500    
+ -1.0156:    62       0.17228:    62           T,.    :   458      0.0005 :    96      0.00178:    96          T,.    :   456    
+ (Other): 79614       (Other): 79614           (Other):   463      (Other): 79485      (Other): 79439          (Other):   465    
+ dbNSFP_Reliability_index
+ .      :282117          
+ 10     : 52479          
+ 9      : 14496          
+ 8      :  2793          
+ 4      :  2027          
+ 7      :  1395          
+ (Other):  6994          
+                                                                                        dbNSFP_Interpro_domain
+ .                                                                                                 :327813    
+ .,.                                                                                               :  2505    
+ GPCR__rhodopsin-like_superfamily__1_                                                              :  1406    
+ Cadherin__4_,Cadherin-like__1_                                                                    :  1219    
+ Small_GTP-binding_protein_domain__1_                                                              :   981    
+ Zinc_finger__C2H2-like__1_,Zinc_finger__C2H2__3_,Zinc_finger__C2H2-type/integrase__DNA-binding__1_:   838    
+ (Other)                                                                                           : 27539    
+ dbNSFP_Polyphen2_HDIV_score dbNSFP_SIFT_score dbNSFP_Polyphen2_HVAR_score dbNSFP_Polyphen2_HVAR_pred ANN....ALLELE   
+ .      :287593              .      :280207    .      :287593              .      :287593             A      :108309  
+ 1.0    :  4721              0.0    :  3625    0.001  :  1604              B      : 19454             T      :106314  
+ 1.0,1.0:  2312              .,.    :  2019    0.0    :  1380              D      : 10683             C      : 73232  
+ 0.0    :  2128              0.0,0.0:  1777    0.999  :  1334              B,B    :  7968             G      : 70668  
+ 0.999  :  2076              0.001  :  1582    1.0    :  1168              P      :  6454             AT     :   398  
+ 1      :  1458              .,.,.  :  1293    0.002  :   905              D,D    :  5120             GA     :   383  
+ (Other): 62013              (Other): 71798    (Other): 68317              (Other): 25029             (Other):  2997  
+                 ANN....EFFECT    ANN....IMPACT      ANN....GENE             ANN....GENEID         ANN....FEATURE  
+ downstream_gene_variant:77670   HIGH    :  7191   IGHV2-70:  3654   ENSG00000211974:  3654   gene_variant: 18635  
+ upstream_gene_variant  :62002   LOW     : 31522   IGHV3-71:  3654   ENSG00000254056:  3654   transcript  :343666  
+ missense_variant       :60714   MODERATE: 62537   IGHJ5   :  3319   ENSG00000242472:  3319                        
+ intron_variant         :49912   MODIFIER:261051   IGHJ3P  :  3316   ENSG00000211900:  3316                        
+ 3_prime_UTR_variant    :36619                     IGHJ4   :  3316   ENSG00000237111:  3316                        
+ synonymous_variant     :24586                     IGHJ6   :  3316   ENSG00000240041:  3316                        
+ (Other)                :50798                     (Other) :341726   (Other)        :341726                        
+        ANN....FEATUREID         ANN....BIOTYPE    ANN....RANK         ANN....HGVS_C       ANN....HGVS_P    ANN....CDNA_POS   
+ ENST00000390634:  3654   protein_coding:196281   Min.   : -1.000   c.155G>A  :   148   .         :268539   Min.   :    -1.0  
+ ENST00000523324:  3654   IG_J_gene     : 34652   1st Qu.: -1.000   c.209G>C  :   140   p.Met1?   :   155   1st Qu.:    -1.0  
+ ENST00000488476:  3319   antisense     : 19469   Median :  1.000   c.155G>C  :   111   p.Ser70Thr:   138   Median :    -1.0  
+ ENST00000390560:  3316   .             : 18635   Mean   :  3.938   n.*4374G>A:   109   p.Gly52Glu:   110   Mean   :   425.6  
+ ENST00000436826:  3316   IG_V_gene     : 16786   3rd Qu.:  5.000   c.66G>A   :   105   p.Gln61His:    96   3rd Qu.:    49.0  
+ ENST00000461719:  3316   miRNA         : 14899   Max.   :363.000   c.209G>A  :   100   p.Leu23Leu:    96   Max.   :107385.0  
+ (Other)        :341726   (Other)       : 61579                     (Other)   :361588   (Other)   : 93167                     
+ ANN....CDNA_LEN  ANN....CDS_POS     ANN....CDS_LEN     ANN....AA_POS   ANN....AA_LEN   ANN....DISTANCE   
+ Min.   :    -1   Min.   :    -1.0   Min.   :    -1.0   Min.   :   -1   Min.   :   -1   Min.   :     0.0  
+ 1st Qu.:    -1   1st Qu.:    -1.0   1st Qu.:    -1.0   1st Qu.:   -1   1st Qu.:   -1   1st Qu.:     0.0  
+ Median :    -1   Median :    -1.0   Median :    -1.0   Median :   -1   Median :   -1   Median :    10.0  
+ Mean   :  1103   Mean   :   376.4   Mean   :   764.2   Mean   :  125   Mean   :  254   Mean   :   998.3  
+ 3rd Qu.:   362   3rd Qu.:    26.0   3rd Qu.:   285.0   3rd Qu.:    9   3rd Qu.:   94   3rd Qu.:  1432.0  
+ Max.   :109224   Max.   :107160.0   Max.   :107976.0   Max.   :35720   Max.   :35991   Max.   :426608.0  
+                                                                                                          
+                                 ANN....ERRORS      LOF....GENE             LOF....GENEID    LOF....NUMTR LOF....PERC 
+ .                                      :296117   .       :354050   .              :354050   .:354050     .  :354050  
+ WARNING_TRANSCRIPT_INCOMPLETE          : 44979   IGHV2-70:   116   ENSG00000211974:   116   1:  8251     1.0:  8251  
+ WARNING_TRANSCRIPT_NO_STOP_CODON       : 11911   IGLV3-1 :    73   ENSG00000211673:    73                            
+ WARNING_TRANSCRIPT_NO_START_CODON      :  6872   IGHJ6   :    70   ENSG00000211900:    70                            
+ INFO_REALIGN_3_PRIME                   :  1745   TRAF3   :    50   ENSG00000131323:    50                            
+ WARNING_TRANSCRIPT_MULTIPLE_STOP_CODONS:   618   IGHJ4   :    48   ENSG00000240041:    48                            
+ (Other)                                :    59   (Other) :  7894   (Other)        :  7894    
