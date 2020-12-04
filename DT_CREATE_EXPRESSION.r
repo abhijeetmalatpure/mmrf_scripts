@@ -7,13 +7,13 @@ library(biomaRt)
 
 setwd('c:/Users/abhmalat/OneDrive - Indiana University/MMRF_CoMMpass_IA16a')
 
-df <- read.csv('gene_expression_estimates/MMRF_CoMMpass_IA16a_E74GTF_Cufflinks_Gene_FPKM.txt', sep="\t", header=TRUE)
+df <- read.csv('gene_expression_estimates/MMRF_CoMMpass_IA16a_E74GTF_Sailfish_Gene_TPM.txt', sep="\t", header=TRUE)
 
 head(df)
 
 colnames(df)
 
-ensembl <- useMart(host='apr2020.archive.ensembl.org',
+ensembl <- useEnsembl(host="grch37.ensembl.org",
                    biomart='ENSEMBL_MART_ENSEMBL',
                    dataset='hsapiens_gene_ensembl')
 
@@ -63,7 +63,7 @@ names(dfFinal)[2] <- "Entrez_Gene_Id"
 head(dfFinal[,1:6])  
 
 
-outputFile <- "data_expression_rnaseq.txt"
+outputFile <- "data_expression_rnaseq_tpm_grch37.txt"
 
 if(file.exists(outputFile)) {
     file.remove(outputFile)
@@ -90,7 +90,7 @@ writeLines(
   "cancer_study_identifier: mmrf_2020",
   "stable_id: mmrf_2020_rna_seq_mrna",
   "case_list_name: RNA Seq",
-  "case_list_description: E74GTF_Cufflinks_Gene_FPKM",
+  "case_list_description: E74GTF_Sailfish_Gene_TPM",
   paste("case_list_ids: ", paste(sampleIds, collapse = '\t'))
   ), f)
 close(f)

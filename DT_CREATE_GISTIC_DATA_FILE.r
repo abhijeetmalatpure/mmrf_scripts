@@ -1,15 +1,20 @@
 library("data.table")
 library("ggplot2")
+library(reshape2)
 
-setwd('f:/mmrf_data')
+setwd('c:/Users/abhmalat/OneDrive - Indiana University/MMRF_CoMMpass_IA16a')
 
-gisticAmpGenesFile <- 'F:/FROM_BRII/mmrf_gistic2_results_2019_0102/mmrf_results/amp_genes.conf_90.txt'
 
+gisticAmpGenesFile <- 'gistic2/amp_genes.conf_90.txt'
+
+ensembl <- useMart(host="grch37.ensembl.org",
+                   biomart = "ENSEMBL_MART_ENSEMBL",
+                  dataset = "hsapiens_gene_ensembl")
 
 message(paste0('Processing ', basename(gisticAmpGenesFile), '..'))
 ampGenes <- data.table::fread(input = gisticAmpGenesFile, stringsAsFactors = FALSE, header = TRUE)
 
-# Removes last column (V51) 
+# Removes last column (V81)
 if(colnames(ampGenes)[ncol(ampGenes)] == paste('V', ncol(ampGenes), sep='')){
   ampGenes <- ampGenes[, 1:ncol(ampGenes)-1, with = FALSE]
 }
@@ -28,7 +33,7 @@ str(amp2)
 
 amp3 <- amp2[2:nrow(amp2)]
 
-amp3$cytoband = cytoband
+amp3$cytoband <- cytoband
 
 head(amp3)
 
@@ -54,9 +59,9 @@ head(amp4)
 
 #we need data only from 4th row
 ampGenes <- ampGenes[4:nrow(ampGenes),]
-ampGenes$cytoband = gsub(pattern = ' ', replacement = '_', x = ampGenes$cytoband)
+ampGenes$cytoband <- gsub(pattern = ' ', replacement = '_', x = ampGenes$cytoband)
 
-data.table::setDF(x = ampGenes)
+df <- data.table::setDF(x = ampGenes)
 ampGenes <- suppressWarnings(data.table::melt(ampGenes, id.vars = 'cytoband'))
 data.table::setDT(ampGenes)
 
@@ -90,12 +95,12 @@ amp6 <- amp5[, .(chromosome, peak_start, peak_end, genes_in_region, amp, cytoban
 
 head(amp6,7)
 
-ampOutputFile <- "DT_R/cbio_files/data_gistic2_amp_file.txt"
+outputFile <- "data_gistic_genes_amp_dt.txt"
 
-file.remove(outputFile)
+# file.remove(outputFile)
 file.create(outputFile)
 
-write.table(amp6, file=ampOutputFile, sep = "\t", col.names = TRUE, row.names=FALSE, quote = FALSE, append = TRUE, na="") 
+write.table(data.table::setDF(amp6), file=outputFile, sep = "\t", col.names = TRUE, row.names=FALSE, quote = FALSE, append = TRUE, na="")
 
 
 
@@ -104,7 +109,7 @@ write.table(amp6, file=ampOutputFile, sep = "\t", col.names = TRUE, row.names=FA
 # DELETIONS FILE FROM GISTIC
 #---------------------------------------
 
-gisticDelGenesFile <- 'F:/FROM_BRII/mmrf_gistic2_results_2019_0102/mmrf_results/del_genes.conf_90.txt'
+gisticDelGenesFile <- 'gistic2/del_genes.conf_90.txt'
 
 message(paste0('Processing ', basename(gisticDelGenesFile), '..'))
 delGenes <- data.table::fread(input = gisticDelGenesFile, stringsAsFactors = FALSE, header = TRUE)
@@ -128,7 +133,7 @@ str(del2)
 
 del3 <- del2[2:nrow(del2)]
 
-del3$cytoband = cytoband
+del3$cytoband <- cytoband
 
 head(del3)
 
@@ -154,7 +159,7 @@ head(del4)
 
 #we need data only from 4th row
 delGenes <- delGenes[4:nrow(delGenes),]
-delGenes$cytoband = gsub(pattern = ' ', replacement = '_', x = delGenes$cytoband)
+delGenes$cytoband <- gsub(pattern = ' ', replacement = '_', x = delGenes$cytoband)
 
 data.table::setDF(x = delGenes)
 delGenes <- suppressWarnings(data.table::melt(delGenes, id.vars = 'cytoband'))
@@ -190,12 +195,12 @@ del6 <- del5[, .(chromosome, peak_start, peak_end, genes_in_region, amp, cytoban
 
 head(del6,7)
 
-delOutputFile <- "DT_R/cbio_files/data_gistic2_del_file.txt"
+delOutputFile <- "data_gistic_genes_del_dt.txt"
 
 file.remove(delOutputFile)
-file.create(delOputFile)
+file.create(delOutputFile)
 
-write.table(del6, file=delOutputFile, sep = "\t", col.names = TRUE, row.names=FALSE, quote = FALSE, append = TRUE, na="") 
+write.table(data.table::setDF(del6), file=delOutputFile, sep = "\t", col.names = TRUE, row.names=FALSE, quote = FALSE, append = TRUE, na="")
 
 
 

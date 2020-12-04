@@ -10,14 +10,14 @@ library(biomaRt)
 
 setwd('c:/Users/abhmalat/OneDrive - Indiana University/MMRF_CoMMpass_IA16a')
 
-df <- read.csv('copy_number_estimates/MMRF_CoMMpass_IA16a_CNA_LongInsert_PerGene_LowestSegment.txt', sep="\t", header=TRUE)
+df <- read.csv('copy_number_estimates/MMRF_CoMMpass_IA16a_CNA_Exome_PerGene_LargestSegment.txt', sep="\t", header=TRUE)
 
 head(df)
 colnames(df)
 summary(df)
 
 # Lookup Gene by Gene (ensembl id)
-ensembl <- useMart(host='apr2020.archive.ensembl.org',
+ensembl <- useEnsembl(host="grch37.ensembl.org",
                    biomart='ENSEMBL_MART_ENSEMBL',
                    dataset='hsapiens_gene_ensembl')
 
@@ -62,7 +62,7 @@ dfPrelim <- dfWithHugo %>%
 
 head(dfPrelim[,1:8],300)
 
-outputFile <- ("data_CNA_LongInsert_PerGene_Lowest_Continuous.txt")
+outputFile <- ("data_CNA_Exome_PerGene_Largest_Continuous_Grch37.txt")
 
 if(file.exists(outputFile)) {
     file.remove(outputFile)
@@ -74,21 +74,21 @@ write.table(dfPrelim, file=outputFile, sep = "\t", col.names = TRUE, row.names=F
 # output case_list for _cna
 sampleIds <- colnames(dfPrelim[,3:ncol(dfPrelim)])
 
-#outputFileCL <- ("case_lists/cases_cna_lowest_continuous.txt")
-#
-#if(file.exists(outputFileCL)) {
-#    file.remove(outputFileCL)
-#}
-#file.create(outputFileCL)
+outputFileCL <- ("case_lists/cases_cna_continuous.txt")
 
-#f <- file(outputFileCL)
-#writeLines(c(
-#  "cancer_study_identifier: mmrf_2020",
-#  "stable_id: mmrf_2020_cna_lowest",
-#  "case_list_name: Continuous Copy Number Analysis Lowest Segment",
-#  "case_list_description: Continuous Copy Number Analysis Lowest Segment",
-#  paste("case_list_ids: ", paste(sampleIds, collapse = '\t'))
-#), f
-#)
-#close(f)
+if(file.exists(outputFileCL)) {
+    file.remove(outputFileCL)
+}
+file.create(outputFileCL)
+
+f <- file(outputFileCL)
+writeLines(c(
+  "cancer_study_identifier: mmrf_2020",
+  "stable_id: mmrf_2020_cna_exome_largest",
+  "case_list_name: Continuous Copy Number Analysis Exome Largest Segment",
+  "case_list_description: Continuous Copy Number Exome Analysis Largest Segment",
+  paste("case_list_ids: ", paste(sampleIds, collapse = '\t'))
+), f
+)
+close(f)
 print("Completed.")

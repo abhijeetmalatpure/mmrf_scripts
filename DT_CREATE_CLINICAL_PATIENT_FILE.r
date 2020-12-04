@@ -1,9 +1,9 @@
 library(dplyr)
 library(tidyr)
 
-setwd("f:/mmrf_data")
+setwd("c:/Users/abhmalat/OneDrive - Indiana University/RI cBioPortal/PEDS_brrhelm")
 
-per_patient <- read.csv('clinical_flat_files/MMRF_CoMMpass_IA11_PER_PATIENT.csv', header=TRUE)
+per_patient <- read.csv('', header=TRUE)
 
 head(per_patient)
 
@@ -53,10 +53,10 @@ summary(cbio_pat[,c('GENDER', 'RACE', 'ETHNICITY')])
 
 head(cbio_pat)
 
-cbio_pat$OS_STATUS = with(cbio_pat, ifelse(OS_STATUS == 'No' & OS_STATUS_SUP == 'Death', 'DECEASED', 'LIVING'))
-cbio_pat$DFS_STATUS = with(cbio_pat, ifelse(DFS_STATUS == 1, 'DiseaseFree', 'Recurred/Progressed'))
+cbio_pat$OS_STATUS <- with(cbio_pat, ifelse(OS_STATUS == 'No' & OS_STATUS_SUP == 'Death', 'DECEASED', 'LIVING'))
+cbio_pat$DFS_STATUS <- with(cbio_pat, ifelse(DFS_STATUS == 1, 'DiseaseFree', 'Recurred/Progressed'))
 
-cbio_pat$OS_MONTHS = with(cbio_pat,
+cbio_pat$OS_MONTHS <- with(cbio_pat,
                          ifelse(
                              is.na(OS_MONTHS) & OS_STATUS == 'LIVING',
                                  trunc(max(per_pat_keep$D_PT_deathdy,na.rm = TRUE)/30),
@@ -70,7 +70,7 @@ cbio_pat$OS_MONTHS = with(cbio_pat,
 
 
 
-cbio_pat$DFS_MONTHS = with(cbio_pat, ifelse(is.na(DFS_MONTHS), 0, trunc(DFS_MONTHS/30)))
+cbio_pat$DFS_MONTHS <- with(cbio_pat, ifelse(is.na(DFS_MONTHS), 0, trunc(DFS_MONTHS/30)))
 
 output_cols <- c('PATIENT_ID', 'OS_STATUS', 'OS_MONTHS', 'DFS_STATUS', 'DFS_MONTHS', 'PATIENT_DISPLAY_NAME', 'GENDER', 'AGE', 'RACE', 'ETHNICITY')
 

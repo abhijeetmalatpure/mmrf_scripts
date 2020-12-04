@@ -2,96 +2,102 @@ library(purrr)
 library(dplyr)
 library(org.Hs.eg.db)
 library(annotate)
-
 library(biomaRt)
+library(tidyr)
 
 setwd('c:/Users/abhmalat/OneDrive - Indiana University/MMRF_CoMMpass_IA16a')
 
-df <- read.csv('gene_expression_estimates/MMRF_CoMMpass_IA16a_E74GTF_Cufflinks_Gene_FPKM.txt', sep="\t", header=TRUE)
+df <- read.csv('fusion_transcripts/MMRF_CoMMpass_IA16a_TophatFusion_Results.txt', sep="\t", header=TRUE)
 
 head(df)
 
 colnames(df)
 
-ensembl <- useMart(host='apr2020.archive.ensembl.org',
+ensembl <- useEnsembl(host="grch37.ensembl.org",
                    biomart='ENSEMBL_MART_ENSEMBL',
                    dataset='hsapiens_gene_ensembl')
 
 
-listFilters(mart=ensembl)
+filters <- listFilters(mart=ensembl)
 
-Hugo_Symbols <- getBM(c("ensembl_gene_id", "hgnc_symbol"), filters = "ensembl_gene_id", values=df$GENE_ID, ensembl)
-
-Entrez_Gene_Ids <- getBM(attributes = c("ensembl_gene_id", "entrezgene_id"), filters = 'ensembl_gene_id', values=df$GENE_ID, ensembl)
+Hugo_Symbols <- getBM(attributes = c("ensembl_gene_id", "hgnc_symbol"), filters = "ensembl_gene_id",
+                      values=unique(c(df$left.Gene, df$right.Gene)), uniqueRows = TRUE, ensembl)
+Entrez_Gene_Ids <- getBM(attributes = c("ensembl_gene_id", "entrezgene_id"), filters = 'ensembl_gene_id',
+                         values=unique(c(df$left.Gene, df$right.Gene)), uniqueRows = TRUE, ensembl)
+Hugo_Symbols_name <- getBM(attributes = c("external_gene_name", "hgnc_symbol"), filters = "external_gene_name",
+                      values=unique(c(df$left.Gene, df$right.Gene)), uniqueRows = TRUE, ensembl)
+Entrez_Gene_Ids_name <- getBM(attributes = c("external_gene_name", "entrezgene_id"), filters = 'external_gene_name',
+                         values=unique(c(df$left.Gene, df$right.Gene)), uniqueRows = TRUE, ensembl)
 
 
 summary(Hugo_Symbols)
-
 head(Hugo_Symbols)
 
 summary(Entrez_Gene_Ids)
-
 head(Entrez_Gene_Ids)
 
 EntrezGrouped <- group_by(.data=Entrez_Gene_Ids, ensembl_gene_id)
+EntrezGroupedName <- group_by(.data=Entrez_Gene_Ids_name, external_gene_name)
+HugoGrouped <- group_by(.data=Hugo_Symbols, ensembl_gene_id)
+HugoGroupedName <- group_by(.data=Hugo_Symbols_name, external_gene_name)
 
-dfEntrez <- left_join(df, EntrezGrouped, by=c("GENE_ID" = "ensembl_gene_id"))
+dfIntermediate <- df[, c('ID', 'left.Gene', 'right.Gene')] %>%
+  left_join(EntrezGrouped, by=c("left.Gene" = "ensembl_gene_id")) %>%
+  left_join(EntrezGrouped, by=c("right.Gene" = "ensembl_gene_id"))
 
-dfEntrez <- dfEntrez %>% dplyr::select( entrezgene_id, everything() )
+dfIntermediate <- dfIntermediate %>%
+  left_join(EntrezGroupedName, by=c("left.Gene" = "external_gene_name")) %>%
+  left_join(EntrezGroupedName, by=c("right.Gene" = "external_gene_name"))
 
-head(dfEntrez[,1:5])
+dfIntermediate <- dfIntermediate %>%
+  left_join(HugoGrouped, by=c("left.Gene" = "ensembl_gene_id")) %>%
+  left_join(HugoGrouped, by=c("right.Gene" = "ensembl_gene_id"))
 
-dfHugo <- left_join(dfEntrez, Hugo_Symbols, by=c("GENE_ID" = "ensembl_gene_id"))
+dfIntermediate <- dfIntermediate %>%
+  left_join(HugoGroupedName, by=c("left.Gene" = "external_gene_name")) %>%
+  left_join(HugoGroupedName, by=c("right.Gene" = "external_gene_name"))
 
-dfHugo <- dfHugo %>% dplyr::select(hgnc_symbol, everything())
+#dfIntermediate <- head(dfIntermediate, 100)
+# _Left and _Right columns for Hugo and Entrez below are only used as intermediaries to create the Fusion label
+dfIntermediate$Entrez_Left <- ifelse(is.na(dfIntermediate$entrezgene_id.x),
+                                     dfIntermediate$left.Gene, dfIntermediate$entrezgene_id.x)
+dfIntermediate$Entrez_Right <- ifelse(is.na(dfIntermediate$entrezgene_id.y),
+                                      dfIntermediate$right.Gene, dfIntermediate$entrezgene_id.y)
 
-head(dfHugo[,1:6])
+dfIntermediate$Hugo_Left <- ifelse(is.na(dfIntermediate$hgnc_symbol.x),
+                                   dfIntermediate$left.Gene, dfIntermediate$hgnc_symbol.x)
+dfIntermediate$Hugo_Right <- ifelse(is.na(dfIntermediate$hgnc_symbol.y),
+                                    dfIntermediate$right.Gene, dfIntermediate$hgnc_symbol.y)
 
-dfFinal <- dfHugo %>% 
-            filter(hgnc_symbol != "") %>%
-            dplyr::select(-GENE_ID)
+dfIntermediate$Fusion <- paste(dfIntermediate$Hugo_Left, '-', dfIntermediate$Hugo_Right, ' Fusion')
 
-nrow(dfFinal)
+dfIntermediate$center <- 'sequencing_center_unknown'
+dfIntermediate$DNA_support <- 'no'
+dfIntermediate$RNA_support <- 'yes'
+dfIntermediate$Method <- 'Tophat-fusion'
+dfIntermediate$Frame <- 'Unknown'
 
+dfLeft <- dfIntermediate[,c('left.Gene','hgnc_symbol.x',  'entrezgene_id.x', 'center', 'ID', 'Fusion', 'DNA_support', 'RNA_support', 'Method', 'Frame')]
+dfRight <- dfIntermediate[,c('right.Gene', 'hgnc_symbol.y',  'entrezgene_id.y', 'center', 'ID', 'Fusion', 'DNA_support', 'RNA_support', 'Method', 'Frame')]
 
-head(dfFinal[,1:6])
+names(dfLeft) <- c('TophatResultsGeneName', 'Hugo_Symbol', 'Entrez_Gene_Id', 'Center', 'Tumor_Sample_Barcode', 'Fusion', 'DNA_support', 'RNA_support', 'Method', 'Frame')
+names(dfRight) <- c('TophatResultsGeneName', 'Hugo_Symbol', 'Entrez_Gene_Id', 'Center', 'Tumor_Sample_Barcode', 'Fusion', 'DNA_support', 'RNA_support', 'Method', 'Frame')
 
-names(dfFinal)[1] <- "Hugo_Symbol"
+dfFinal <- rbind(dfLeft, dfRight)
 
-names(dfFinal)[2] <- "Entrez_Gene_Id"
-
-head(dfFinal[,1:6])  
-
-
-outputFile <- "data_expression_rnaseq.txt"
+outputFile <- "data_fusion_grch37.txt"
+# outputFileWithBlanks <- "zdata_fusion_blanks.txt"
 
 if(file.exists(outputFile)) {
     file.remove(outputFile)
 }
 file.create(outputFile)
 
-write.table(dfFinal, file=outputFile, sep = "\t", col.names = TRUE, row.names=FALSE, quote = FALSE, append = TRUE, na="NA")
+write.table(dfFinal %>%
+              filter(dfFinal$Hugo_Symbol != "" & dfFinal$Entrez_Gene_Id != "") %>%
+              select(c('Hugo_Symbol', 'Entrez_Gene_Id', 'Center', 'Tumor_Sample_Barcode', 'Fusion', 'DNA_support', 'RNA_support', 'Method', 'Frame')),
+            file=outputFile, sep = "\t", col.names = TRUE, row.names=FALSE, quote = FALSE, append = TRUE, na="NA")
 
+# write.table(dfFinal, file=outputFileWithBlanks, sep = "\t", col.names = TRUE, row.names=FALSE, quote = FALSE, append = TRUE, na="NA")
 
-# output case_list for _
-
-sampleIds <- colnames(dfFinal[,3:ncol(dfFinal)])
-
-outputFileCL <- "case_lists/cases_rna_seq_mrna.txt"
-
-if(file.exists(outputFileCL)) {
-    file.remove(outputFileCL)
-}
-file.create(outputFileCL)
-
-f <- file(outputFileCL)
-writeLines(
-  c(
-  "cancer_study_identifier: mmrf_2020",
-  "stable_id: mmrf_2020_rna_seq_mrna",
-  "case_list_name: RNA Seq",
-  "case_list_description: E74GTF_Cufflinks_Gene_FPKM",
-  paste("case_list_ids: ", paste(sampleIds, collapse = '\t'))
-  ), f)
-close(f)
 print('Completed.')

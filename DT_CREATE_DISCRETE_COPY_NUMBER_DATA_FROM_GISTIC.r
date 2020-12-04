@@ -6,29 +6,31 @@ library(tidyr)
 
 library(org.Hs.eg.db)
 library(annotate)
+library(biomaRt)
 
-setwd('f:/mmrf_data')
 
-df <- read.csv('copy_number_files/MMRF_CoMMpass_IA11a_CNA_Exome_extended_PerGene_LargestSegment.txt', sep="\t", header=TRUE)
+setwd('c:/Users/abhmalat/OneDrive - Indiana University/MMRF_CoMMpass_IA16a')
+
+df <- read.csv('copy_number_estimates/MMRF_CoMMpass_IA16a_CNA_Exome_PerGene_LargestSegment.txt', sep="\t", header=TRUE)
 
 head(df)
 colnames(df)
 summary(df)
 
 # Lookup Gene by Gene (ensembl id)
-ensembl <- useMart(host='dec2016.archive.ensembl.org',
+ensembl <- useMart(host="grch37.ensembl.org",
                    biomart='ENSEMBL_MART_ENSEMBL',
                    dataset='hsapiens_gene_ensembl')
 
 Hugo_Symbols <- getBM(c("ensembl_gene_id", "hgnc_symbol"), filters = "ensembl_gene_id", values=df$Gene, ensembl)
 
-Entrez_Gene_Ids <- getBM(attributes = c("ensembl_gene_id", "entrezgene"), filters = 'ensembl_gene_id', values=df$Gene, ensembl)
+Entrez_Gene_Ids <- getBM(attributes = c("ensembl_gene_id", "entrezgene_id"), filters = 'ensembl_gene_id', values=df$Gene, ensembl)
 
 Entrez_Gene_Ids[,"ensembl_gene_id"] <- as.factor(Entrez_Gene_Ids[, "ensembl_gene_id"])
 
-Entrez_Gene_Ids[,"entrezgene"] <- as.factor(Entrez_Gene_Ids[, "entrezgene"])
+Entrez_Gene_Ids[,"entrezgene_id"] <- as.factor(Entrez_Gene_Ids[, "entrezgene_id"])
 
-foo <- unique(arrange(Entrez_Gene_Ids, ensembl_gene_id, entrezgene))
+foo <- unique(arrange(Entrez_Gene_Ids, ensembl_gene_id, entrezgene_id))
 
 fooHugo <- left_join(foo, Hugo_Symbols, by="ensembl_gene_id")
 
@@ -44,9 +46,9 @@ nrow(dfEntrez)
 
 colnames(dfEntrez)
 
-levels ( dfEntrez$entrezgene )
+levels ( dfEntrez$entrezgene_id )
 
-dfWithHugo <- dfEntrez %>% dplyr::select(hgnc_symbol, entrezgene, everything())
+dfWithHugo <- dfEntrez %>% dplyr::select(hgnc_symbol, entrezgene_id, everything())
 
 colnames(dfWithHugo[,1:5])
 
@@ -63,6 +65,9 @@ dfPrelim <- dfWithHugo %>%
 head(dfPrelim[,1:10])
 
 calcCopyNumLevel <- function(x) {
+  if ( is.na(x) ) {
+    return(NA)
+  } else
   if ( x < -2 ) {
     return(-2)
   } else
@@ -79,29 +84,29 @@ calcCopyNumLevel <- function(x) {
   }
 }
 
-dfPrelim[,3:ncol(dfPrelim)] = as.data.frame(lapply(dfPrelim[,3:ncol(dfPrelim)], FUN= function(x) sapply(x, FUN=calcCopyNumLevel) ) )
+dfPrelim[,3:ncol(dfPrelim)] <- as.data.frame(lapply(dfPrelim[,3:ncol(dfPrelim)], FUN= function(x) sapply(x, FUN=calcCopyNumLevel) ) )
 
 head(dfPrelim[,1:8],300)
 
-outputFile <- "DT_R/cbio_files/data_CNA.txt"
+outputFile <- "data_CNA_discrete.txt"
 
 file.remove(outputFile)
 file.create(outputFile)
 
-write.table(dfPrelim, file=outputFile, sep = "\t", col.names = TRUE, row.names=FALSE, quote = FALSE, append = TRUE, na="") 
+write.table(dfPrelim, file=outputFile, sep = "\t", col.names = TRUE, row.names=FALSE, quote = FALSE, append = TRUE, na="NA")
 
 # output case_list for _cna
 sampleIds <- colnames(dfPrelim[,3:ncol(dfPrelim)])
 
-outputFileCL <- "DT_R/cbio_files/case_lists/cases_cna.txt"
+outputFileCL <- "case_lists/cases_cna_discrete.txt"
 
 file.remove(outputFileCL)
 file.create(outputFileCL)
 
 f <- file(outputFileCL)
 writeLines(c(
-  "cancer_study_identifier: mmrf_mar_2018",
-  "stable_id: mmrf_mar_2018_cna",
+  "cancer_study_identifier: mmrf_test",
+  "stable_id: mmrf_test_cna",
   "case_list_name: Discrete Copy Number Analysis",
   "case_list_description: Discrete Copy Number Analysis",
   paste("case_list_ids: ", paste(sampleIds, collapse = '\t'))
