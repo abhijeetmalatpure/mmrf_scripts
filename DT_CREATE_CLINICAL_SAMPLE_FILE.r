@@ -83,4 +83,14 @@ outputFile <- "data_clinical_sample_1203.txt"
 write.table(df_final, file=outputFile, sep = "\t", col.names = FALSE,
             row.names=FALSE, quote = FALSE, append = FALSE)
 
+metaFile <- file("meta_clinical_sample.txt")
+writeLines(c(
+  "cancer_study_identifier: mmrf_2020",
+  "genetic_alteration_type: CLINICAL",
+  "datatype: SAMPLE_ATTRIBUTES",
+  paste("data_filename: ", outputFile)
+), metaFile
+)
+close(metaFile)
+
 print('Samples completed')
