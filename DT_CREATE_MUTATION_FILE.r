@@ -5,7 +5,7 @@ library(dplyr)
 library(tidyr)
 library(biomaRt)
 
-setwd('c:/Users/abhmalat/OneDrive - Indiana University/MMRF_CoMMpass_IA16a')
+setwd('c:/Users/abhmalat/OneDrive - Indiana University/cbio_MMRF')
 
 df <- read.csv('somatic_mutation_files/MMRF_CoMMpass_IA16a_All_Canonical_NS_Variants.txt', sep="\t", header=TRUE)
 
@@ -117,7 +117,7 @@ dfVarEntrez3 <- dfVarEntrez2 %>% dplyr::select("Hugo_Symbol", "Entrez_Gene_Id", 
                                                "dbSNP_RS", "Tumor_Sample_Barcode",
                                                "HGVSp_Short", "Protein_Pos")
 
-outputFile <- ("somatic_mutation_files/data_mutation_file.maf")
+outputFile <- ("somatic_mutation_files/data_mutation_file_37.maf")
 if(file.exists(outputFile)) {
     file.remove(outputFile)
 }
