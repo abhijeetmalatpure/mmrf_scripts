@@ -117,6 +117,7 @@ def vcf2maf_call(filename, vcf_normal, vcf_tumor, normal_id, tumor_id, vcf_type)
         '--tumor-id', tumor_id,
         '--vcf-normal-id', vcf_normal,
         '--vcf-tumor-id', vcf_tumor,
+        '--ncbi-build', 'GRCh38',
         '--custom-enst', join(toolspath, 'data', 'isoform_overrides_uniprot'),
         '--ref-fasta',
         join(expanduser("~"), fasta)
