@@ -75,10 +75,12 @@ os.environ['_LMFILES_'] = libraries['lmfiles']
 os.environ['LD_LIBRARY_PATH'] = libraries['ld_library_path']
 
 toolspath = join(expanduser("~"), "cbio_tools", "vcf2maf")
-tmppath = "/N/slate/abhmalat/cmg_mm/vcf2mafConversion/tmp"
-mafpath = "/N/slate/abhmalat/cmg_mm/vcf2mafConversion/maf/somatic"
+tmppath = "/N/slate/abhmalat/cmg_mm/grch38/tmp"
+vcfpath = "/N/slate/abhmalat/cmg_mm/grch38/vcf"
+mafpath = "/N/slate/abhmalat/cmg_mm/grch38/maf"
+enhancedpath = "/N/slate/abhmalat/cmg_mm/grch38/enhanced"
 
-[os.makedirs(path, exist_ok=True) for path in [mafpath, tmppath]]
+[os.makedirs(path, exist_ok=True) for path in [tmppath, mafpath, vcfpath, enhancedpath]]
 
 run = str(int(time.mktime(datetime.datetime.now().timetuple())))
 vcf_metadata.to_csv(join(mafpath, "vcf_metadata_mm_somatic" + run + ".csv"), sep=",", index=False)
@@ -96,18 +98,36 @@ def vcf2maf_call(filename, vcf_normal, vcf_tumor, normal_id, tumor_id, vcf_type)
     os.makedirs(tmpdir, exist_ok=True)
 
     vcffile = join(vcfroot, filename)
+    evcffile = join(vcfpath, (tumor_id + '.' + vcf_type + '.enhanced.vcf'))
     maffile = join(mafpath, (tumor_id + '.' + vcf_type + '.maf'))
+    enhancedfile = join(enhancedpath, (tumor_id + '.' + vcf_type + '.enhanced.maf'))
 
-    fasta = '.vep/homo_sapiens/102_GRCh38/Homo_sapiens.GRCh38.dna.toplevel.fa.gz' if vcf_type == 'somaticSV' \
-        else '.vep/homo_sapiens/broad_hg38/resources_broad_hg38_v0_Homo_sapiens_assembly38.fasta'
+    grch_fasta = '.vep/homo_sapiens/102_GRCh38/Homo_sapiens.GRCh38.dna.toplevel.fa.gz'
+    broad_fasta = '.vep/homo_sapiens/broad_hg38/resources_broad_hg38_v0_Homo_sapiens_assembly38.fasta'
+
+    fasta = broad_fasta if not vcf_type == 'SomaticSV' else grch_fasta
 
     if os.path.isfile(maffile):
         logger.info(f"{maffile} already exists. Skipping.")
         return True
 
+    vcf2vcf = [
+        'perl', join(toolspath, 'vcf2vcf.pl'),
+        '--input-vcf', vcffile,
+        '--output-vcf', evcffile,
+        '--vcf-tumor-id', vcf_tumor,
+        '--vcf-normal-id', vcf_normal,
+        '--new-normal-id', normal_id,
+        '--new-tumor-id', tumor_id,
+        '--ref-fasta', join(expanduser("~"), fasta)
+    ]
+
+    if not vcf_type == 'SomaticSV':
+        vcf2vcf.extend(['--remap-chain', join(toolspath, 'data', 'hg38_to_GRCh38.chain')])
+
     vcf2maf = [
         'perl', join(toolspath, 'vcf2maf.pl'),
-        '--input-vcf', vcffile,
+        '--input-vcf', evcffile,
         '--output-maf', maffile,
         '--vep-path', join(toolspath, 'vep'),
         '--vep-data', join(expanduser("~"), '.vep'),
@@ -115,48 +135,88 @@ def vcf2maf_call(filename, vcf_normal, vcf_tumor, normal_id, tumor_id, vcf_type)
         '--tmp-dir', tmpdir,
         '--normal-id', normal_id,
         '--tumor-id', tumor_id,
-        '--vcf-normal-id', vcf_normal,
-        '--vcf-tumor-id', vcf_tumor,
+        '--vcf-normal-id', normal_id,
+        '--vcf-tumor-id', tumor_id,
         '--ncbi-build', 'GRCh38',
         '--custom-enst', join(toolspath, 'data', 'isoform_overrides_uniprot'),
+        '--ref-fasta', join(expanduser("~"), fasta)
+    ]
+
+    maf2maf = [
+        'perl', join(toolspath, 'maf2maf.pl'),
+        '--input-maf', maffile,
+        '--output-maf', enhancedfile,
+        '--vep-path', join(toolspath, 'vep'),
+        '--vep-data', join(expanduser("~"), '.vep'),
+        '--vep-forks', '5',
+        '--tmp-dir', tmpdir,
+        '--ncbi-build', 'GRCh38',
         '--ref-fasta',
         join(expanduser("~"), fasta)
     ]
 
+    #print("VCF2VCF: " + ' '.join(vcf2vcf))
     #print("VCF2MAF: " + ' '.join(vcf2maf))
+    logger.info("VCF2VCF: " + ' '.join(vcf2vcf))
     logger.info("VCF2MAF: " + ' '.join(vcf2maf))
+    logger.info("MAF2MAF: " + ' '.join(maf2maf))
 
-    subprocess.call(vcf2maf)
-    retval = False
+    retval = True
 
-    if os.path.isfile(maffile):
-        logger.info(f"VCF2MAF succeeded. {maffile} exists!")
-        retval = True
-    else:
-        logger.info(
-            f"VCF2MAF FAILED FOR {vcffile}")
-
-    for fl in os.listdir(tmpdir):
-        if os.path.isfile(fl) and fl.endswith('.vcf'):
-            logger.info(f"Removing {fl}")
-            os.unlink(f)
-
+    # subprocess.call(vcf2vcf)
+    # if os.path.isfile(evcffile):
+    #     logger.info(f"VCF2VCF succeeded. {evcffile} exists!")
+    #
+    #     subprocess.call(vcf2maf)
+    #     if os.path.isfile(maffile):
+    #         logger.info(f"VCF2MAF succeeded. {maffile} exists!")
+    #         delete_temp_vcfs(tmpdir)
+    #         retval = True
+    #
+    #         subprocess.call(maf2maf)
+    #         if os.path.isfile(enhancedfile):
+    #             logger.info(f"MAF2MAF succeeded. {enhancedfile} exists!")
+    #             retval = True
+    #             delete_temp_vcfs(tmpdir)
+    #         else:
+    #             logger.info(
+    #                 f"MAF2MAF FAILED FOR {maffile}")
+    #     else:
+    #         logger.info(
+    #             f"VCF2MAF FAILED FOR {evcffile}")
+    # else:
+    #     logger.info(
+    #         f"VCF2VCF FAILED FOR {vcffile}")
     return retval
 
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=5) as f:
-    vcf_metadata['maf_result'] = list(f.map(vcf2maf_call,
-                                           vcf_metadata.filename, vcf_metadata.vcf_normal,
-                                           vcf_metadata.vcf_tumor,vcf_metadata.normal_id,
-                                           vcf_metadata.tumor_id, vcf_metadata.vcf_type ))
-    for index, vcf in vcf_metadata.iterrows():
-        logger.info(f"{vcf.filename}: {vcf.maf_result}")
+def delete_temp_vcfs(tmpdir):
+    logger.info(f"Deleting files from {tmpdir}")
+    for fl in os.listdir(tmpdir):
+        if fl.endswith('.vcf'):
+            logger.info(f"Removing {fl}")
+            os.unlink(fl)
 
+#
+# with concurrent.futures.ThreadPoolExecutor(max_workers=5) as f:
+#     vcf_metadata['maf_result'] = list(f.map(vcf2maf_call,
+#                                            vcf_metadata.filename, vcf_metadata.vcf_normal,
+#                                            vcf_metadata.vcf_tumor,vcf_metadata.normal_id,
+#                                            vcf_metadata.tumor_id, vcf_metadata.vcf_type ))
+#     for index, vcf in vcf_metadata.iterrows():
+#         logger.info(f"{vcf.filename}: {vcf.maf_result}")
 
-
+results = []
+for index, row in vcf_metadata.iterrows:
+    results[index] = vcf2maf_call(row.filename, row.vcf_normal, row.vcf_tumor, row.normal_id, row.tumor_id, row.vcf_type)
 
 logger.info(f'MAF files found: {len(os.listdir(mafpath))}')  # {success}')
 for root, dirs, files in os.walk(mafpath):
+    for file in files:
+        logger.info(file)
+
+logger.info(f'Enhanced MAF files found: {len(os.listdir(enhancedpath))}')  # {success}')
+for root, dirs, files in os.walk(enhancedpath):
     for file in files:
         logger.info(file)
 
